@@ -18,6 +18,7 @@ load_dotenv()
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = os.environ.get("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 class Token(BaseModel):
@@ -33,7 +34,6 @@ async def get_authenticated_user_info(user_email: str) -> UserAuthentication:
     if user:
         return UserAuthentication(id = user.id, email = user.email )
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Usuário não foi encontrado")
-    
     
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -61,7 +61,6 @@ async def authenticate_user_by_jwt(token: str = Depends(oauth2_scheme)) -> UserA
     user = await get_authenticated_user_info(user_email)
     return user
     
-
 @router.post('/', response_model=Token)
 async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(), database: Database = Depends(get_database)):
     user = UserBasic(email=form_data.username, password=form_data.password)

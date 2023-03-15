@@ -14,10 +14,21 @@ users = Table(
 )
 
 lists = Table(
-    "List",
+    "Lists",
     metadata,
     Column("id", Integer, primary_key = True, autoincrement = True),
     Column("id_user", Integer, ForeignKey(users.c.id), nullable=False),
     Column("name", String(length=255), nullable = False),
-    Column("creation_date", DateTime())
+    Column("creation_date", DateTime(), nullable = False)
+)
+
+activities = Table(
+    "Activities",
+    metadata,
+    Column("id", Integer, primary_key = True, autoincrement = True),
+    Column("id_user", Integer, ForeignKey(users.c.id), nullable=False),
+    Column("id_list", Integer, ForeignKey(lists.c.id), nullable=False),
+    Column("name", String(length=255), nullable = False),
+    Column("description", String(length=255), nullable = True),
+    Column("register_date", DateTime(), nullable = False)
 )
