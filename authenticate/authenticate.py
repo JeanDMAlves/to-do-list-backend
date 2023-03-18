@@ -1,6 +1,6 @@
 import os 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Annotated
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -10,9 +10,8 @@ from routers.user import authenticate_user, get_user_if_exists
 from models.user import UserBasic
 from models.models import users
 from databases import Database
-from database.database import get_database
+from database.database import database, get_database
 from models.user import UserAuthentication
-
 load_dotenv()
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -62,7 +61,7 @@ async def authenticate_user_by_jwt(token: str = Depends(oauth2_scheme)) -> UserA
     return user
     
 @router.post('/', response_model=Token)
-async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(), database: Database = Depends(get_database)):
+async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(OAuth2PasswordRequestForm), database: Database = Depends(get_database)):
     user = UserBasic(email=form_data.username, password=form_data.password)
     user = await get_user_if_exists(user, database)
     user = await authenticate_user(user, database)
@@ -70,6 +69,10 @@ async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(), data
     acess_token = create_access_token(data = {"sub": user.email}, expires_delta=acess_token_expires)
     return {"access_token": acess_token, "token_type": "bearer"}
 
+
+currentUser = Annotated[UserAuthentication, Depends(authenticate_user_by_jwt)]
+
 @router.get('/TESTE')
-async def teste(user: UserAuthentication = Depends(authenticate_user_by_jwt)):
+async def teste(user: currentUser):
     return user.dict()
+
