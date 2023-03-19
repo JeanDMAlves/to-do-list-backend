@@ -26,13 +26,13 @@ async def get_user_if_exists(user: UserBasic, database: current_database) -> Use
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Usuário não foi encontrado")
     return user
 
-async def authenticate_user(database: current_database, user: UserBasic = Depends(get_user_if_exists)):
+async def authenticate_user(user: UserBasic = Depends(get_user_if_exists), database: current_database = current_database):
     hashed_password = await database.fetch_one(f"SELECT password FROM Users WHERE email = '{user.email}'")
     if not (Hasher.verify_password(user.password, *hashed_password)):
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = "Senha incorreta")
     return user
      
-@router.delete("/delete", status_code = status.HTTP_200_OK)
+@router.delete("/", status_code = status.HTTP_200_OK)
 async def delete_user(database: current_database, user: UserBasic = Depends(authenticate_user)) -> str:
     delete_query = users.delete().where(users.c.email == user.email)
     await database.execute(query=delete_query)
@@ -45,7 +45,7 @@ async def update_password(database: current_database, user: UserBasic = Depends(
     await database.execute(query=update_query)
     return "Senha atualizada com sucesso"
     
-@router.post("/register", response_model = str, status_code = status.HTTP_201_CREATED)
+@router.post("/", response_model = str, status_code = status.HTTP_201_CREATED)
 async def create_user(database: current_database, user: UserCreate = Body(...)) -> str:
     if await verify_email_exists(user.email, database):
         raise HTTPException(status_code = status.HTTP_409_CONFLICT, detail = "Usuário já está cadastrado") 

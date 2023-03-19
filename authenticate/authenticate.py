@@ -12,6 +12,7 @@ from models.models import users
 from databases import Database
 from database.database import database, get_database
 from models.user import UserAuthentication
+
 load_dotenv()
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
