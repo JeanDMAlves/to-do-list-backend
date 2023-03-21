@@ -5,8 +5,17 @@ from routers.user import router as user_router
 from routers.list import router as list_router
 from authenticate.authenticate import router as login_router
 from authenticate.authenticate import authenticate_user_by_jwt, oauth2_scheme
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:9000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 app.include_router(user_router, prefix="/user", tags=["user"])
 app.include_router(list_router, prefix="/list", tags=["list"])

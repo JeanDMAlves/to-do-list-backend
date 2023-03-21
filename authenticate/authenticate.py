@@ -32,7 +32,7 @@ async def get_authenticated_user_info(user_email: str) -> UserAuthentication:
     select_query = users.select().where(users.c.email == user_email)
     user = await database.fetch_one(select_query)
     if user:
-        return UserAuthentication(id = user.id, email = user.email )
+        return UserAuthentication(id = user.id, email = user.email)
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Usuário não foi encontrado")
     
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -70,10 +70,8 @@ async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(OAuth2P
     acess_token = create_access_token(data = {"sub": user.email}, expires_delta=acess_token_expires)
     return {"access_token": acess_token, "token_type": "bearer"}
 
-
 currentUser = Annotated[UserAuthentication, Depends(authenticate_user_by_jwt)]
 
-@router.get('/TESTE')
-async def teste(user: currentUser):
-    return user.dict()
-
+# @router.get('/TESTE')
+# async def teste(user: currentUser):
+#     return user.dict()
