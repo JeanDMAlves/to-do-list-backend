@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-from routers.user import authenticate_user, get_user_if_exists
+from authenticate.user import authenticate_user, get_user_if_exists
 from models.user import UserBasic
 from models.models import users
 from databases import Database
@@ -71,7 +71,3 @@ async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(OAuth2P
     return {"access_token": acess_token, "token_type": "bearer"}
 
 currentUser = Annotated[UserAuthentication, Depends(authenticate_user_by_jwt)]
-
-# @router.get('/TESTE')
-# async def teste(user: currentUser):
-#     return user.dict()
