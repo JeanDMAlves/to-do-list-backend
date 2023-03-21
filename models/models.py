@@ -10,6 +10,7 @@ users = Table(
     Column("name", String(length=255), nullable = False),
     Column("email", String(length=255), nullable = False),
     Column("password", String(length=255), nullable = False),
+    Column("image", String(length=255), nullable = True),
     Column("register_date", DateTime())
 )
 

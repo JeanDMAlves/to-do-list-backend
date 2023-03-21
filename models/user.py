@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
     password: str
+    image: Optional[str] = None
     register_date: Optional[datetime] = Field(default_factory=datetime.today)
 
 class UserPartialUpdate(BaseModel):
